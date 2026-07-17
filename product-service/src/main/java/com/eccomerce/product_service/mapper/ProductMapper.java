@@ -5,6 +5,7 @@ import com.eccomerce.product_service.dto.ProductResponseDTO;
 import com.eccomerce.product_service.model.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -13,4 +14,7 @@ public interface ProductMapper {
     Product toProduct(ProductRequestDTO requestDTO);
 
     ProductResponseDTO toProductResponseDTO(Product product);
+
+    @Mapping(target = "id", ignore = true)
+    void updateProductFromRequest(ProductRequestDTO requestDTO, @MappingTarget Product product);
 }

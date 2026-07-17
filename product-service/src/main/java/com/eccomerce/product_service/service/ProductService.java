@@ -9,4 +9,7 @@ public interface ProductService {
 
     ProductResponseDTO createProduct(ProductRequestDTO requestDTO);
     List<ProductResponseDTO> getAllProducts();
+    ProductResponseDTO getProductById(String id);
+    ProductResponseDTO updateProduct(String id, ProductRequestDTO requestDTO);
+    void deleteProduct(String id);
 }
