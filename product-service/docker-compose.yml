@@ -14,9 +14,15 @@ services:
     build: .
     container_name: product-service
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://root:password@mongodb:27017/product-db?authSource=admin
+      - SERVER_PORT=8081
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=product-db
+      - MONGO_USERNAME=root
+      - MONGO_PASSWORD=password
+      - MONGO_AUTH_DB=admin
     depends_on:
       - mongodb
 
