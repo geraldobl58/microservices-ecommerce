@@ -15,3 +15,14 @@ spring:
 
 server:
   port: ${SERVER_PORT:8081}
+  error:
+    include-message: always
+    include-stacktrace: never
+
+logging:
+  level:
+    root: INFO
+    com.eccomerce.product_service: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
+

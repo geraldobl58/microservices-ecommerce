@@ -8,12 +8,14 @@ import com.eccomerce.product_service.model.Product;
 import com.eccomerce.product_service.repository.ProductRepository;
 import com.eccomerce.product_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
@@ -26,11 +28,15 @@ public class ProductServiceImpl implements ProductService {
 
         Product saveProduct = repository.save(product);
 
+        log.info("Product {} created", saveProduct.getName());
+
         return mapper.toProductResponseDTO(saveProduct);
     }
 
     @Override
     public List<ProductResponseDTO> getAllProducts() {
+        log.info("Get all products");
+
        return repository.findAll()
                .stream()
                .map(mapper::toProductResponseDTO)
@@ -57,6 +63,8 @@ public class ProductServiceImpl implements ProductService {
 
         Product updateProduct = repository.save(product);
 
+        log.info("Product {} updated", updateProduct.getName());
+
         return mapper.toProductResponseDTO(updateProduct);
     }
 
@@ -67,5 +75,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         repository.deleteById(id);
+
+        log.info("Product {} deleted", id);
     }
 }
