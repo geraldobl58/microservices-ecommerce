@@ -1,13 +1,13 @@
-package com.eccomerce.invetory_service;
+package com.ecommerce.stock_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InvetoryServiceApplication {
+public class StockServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(InvetoryServiceApplication.class, args);
+		SpringApplication.run(StockServiceApplication.class, args);
 	}
 
 }

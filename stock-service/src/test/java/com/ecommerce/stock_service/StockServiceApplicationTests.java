@@ -1,10 +1,10 @@
-package com.eccomerce.invetory_service;
+package com.ecommerce.stock_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class InvetoryServiceApplicationTests {
+class StockServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
