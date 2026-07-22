@@ -7,6 +7,7 @@ import com.ecomerce.order_service.mapper.OrderMapper;
 import com.ecomerce.order_service.model.Order;
 import com.ecomerce.order_service.repository.OrderRepository;
 import com.ecomerce.order_service.service.OrderService;
+import com.ecomerce.order_service.service.client.StockClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,10 +25,11 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final WebClient.Builder webClientBuilder;
+//    private final WebClient.Builder webClientBuilder;
+    private final StockClient stockClient;
 
-    @Value("${stock.service.url:http://localhost:8082}")
-    private String stockServiceUrl;
+//    @Value("${stock.service.url:http://localhost:8082}")
+//    private String stockServiceUrl;
 
     @Override
     @Transactional
@@ -41,17 +43,20 @@ public class OrderServiceImpl implements OrderService {
             Integer quantity = item.getQuantity();
 
             try {
-                String stockUrl = stockServiceUrl + "/api/v1/stock/reduce/" + sku;
-                log.debug("Calling stock service to reduce stock: {} with quantity: {}", stockUrl, quantity);
+//                String stockUrl = stockServiceUrl + "/api/v1/stock/reduce/" + sku;
+//                log.debug("Calling stock service to reduce stock: {} with quantity: {}", stockUrl, quantity);
+//
+//                String response = webClientBuilder.build().put()
+//                        .uri(stockUrl, uriBuilder -> uriBuilder
+//                                .queryParam("quantity", quantity).build())
+//                        .retrieve()
+//                        .bodyToMono(String.class)
+//                        .block();
+//
+//                log.info("Stock reduced successfully for SKU: {} - Response: {}", sku, response);
 
-                String response = webClientBuilder.build().put()
-                        .uri(stockUrl, uriBuilder -> uriBuilder
-                                .queryParam("quantity", quantity).build())
-                        .retrieve()
-                        .bodyToMono(String.class)
-                        .block();
+                stockClient.reduceStock(sku, quantity);
 
-                log.info("Stock reduced successfully for SKU: {} - Response: {}", sku, response);
             } catch (WebClientResponseException e) {
                 log.error("Stock service returned error for SKU {}: HTTP {} - {}", sku, e.getStatusCode(), e.getResponseBodyAsString());
                 throw new IllegalArgumentException("Stock service error for SKU " + sku + ": " + e.getResponseBodyAsString(), e);
