@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
             Integer quantity = item.getQuantity();
 
             Boolean isInStock = webClientBuilder.build().get()
-                    .uri("http://localhost:8081/api/v1/orders" + sku, uriBuilder -> uriBuilder
+                    .uri("http://localhost:8082/api/v1/stock/" + sku, uriBuilder -> uriBuilder
                             .queryParam("quantity", quantity).build())
                     .retrieve()
                     .bodyToMono(Boolean.class)
