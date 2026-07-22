@@ -42,6 +42,13 @@ class StockController {
         return stockService.updateStock(id, stockRequest);
     }
 
+    @PutMapping("/reduce/{sku}")
+    @ResponseStatus(HttpStatus.OK)
+    public String reduceStock(@PathVariable String sku, @RequestParam Integer quantity) {
+        stockService.reduceStock(sku, quantity);
+        return "Stock reduced successfully.";
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteStock(@PathVariable UUID id) {

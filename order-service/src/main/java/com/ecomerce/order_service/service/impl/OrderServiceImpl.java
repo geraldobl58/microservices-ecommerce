@@ -9,9 +9,11 @@ import com.ecomerce.order_service.repository.OrderRepository;
 import com.ecomerce.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final WebClient.Builder webClientBuilder;
 
+    @Value("${stock.service.url:http://localhost:8082}")
+    private String stockServiceUrl;
 
     @Override
     @Transactional
@@ -36,16 +40,24 @@ public class OrderServiceImpl implements OrderService {
             String sku = item.getSku();
             Integer quantity = item.getQuantity();
 
-            Boolean isInStock = webClientBuilder.build().get()
-                    .uri("http://localhost:8082/api/v1/stock/" + sku, uriBuilder -> uriBuilder
-                            .queryParam("quantity", quantity).build())
-                    .retrieve()
-                    .bodyToMono(Boolean.class)
-                    .block();
+            try {
+                String stockUrl = stockServiceUrl + "/api/v1/stock/reduce/" + sku;
+                log.debug("Calling stock service to reduce stock: {} with quantity: {}", stockUrl, quantity);
 
-            if (!Boolean.TRUE.equals(isInStock)) {
-                throw new IllegalArgumentException("Product with SKU " + sku + " is out of stock or insufficient quantity available.");
+                String response = webClientBuilder.build().put()
+                        .uri(stockUrl, uriBuilder -> uriBuilder
+                                .queryParam("quantity", quantity).build())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
+                log.info("Stock reduced successfully for SKU: {} - Response: {}", sku, response);
+            } catch (WebClientResponseException e) {
+                log.error("Stock service returned error for SKU {}: HTTP {} - {}", sku, e.getStatusCode(), e.getResponseBodyAsString());
+                throw new IllegalArgumentException("Stock service error for SKU " + sku + ": " + e.getResponseBodyAsString(), e);
+            } catch (Exception e) {
+                log.error("Error while calling stock service for SKU {}: {}", sku, e.getMessage(), e);
+                throw new IllegalStateException("Could not verify stock for SKU " + sku + ". Stock service unavailable or SKU not found.", e);
             }
         }
 

@@ -83,4 +83,20 @@ public class StockServiceImpl implements StockService {
 
        log.info("Stock deleted with ID: {}", id);
     }
+
+    @Override
+    @Transactional
+    public void reduceStock(String sku, Integer quantity) {
+        var stock = stockRepository.findBySku(sku)
+                .orElseThrow(
+                        () -> new RuntimeException("Stock with SKU " + sku + " not found.")
+                );
+
+        if (stock.getQuantity() < quantity) {
+            throw new RuntimeException("Insufficient stock for SKU " + sku);
+        }
+
+        stock.setQuantity(stock.getQuantity() - quantity);
+        stockRepository.save(stock);
+    }
 }
