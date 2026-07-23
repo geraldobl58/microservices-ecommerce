@@ -4,11 +4,17 @@ spring:
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/geraldobl58/microservices-config-data.git
-          username: ${GITHUB_USERNAME}
-          password: ${GITHUB_TOKEN}
-          clone-on-start: true
-          default-label: main
+        # Try local filesystem first (use the repository's config-data/ folder)
+        # then fall back to the git repository if GITHUB credentials are provided.
+        composite:
+          - type: native
+            search-locations: file:../config-data
+          - type: git
+            uri: https://github.com/geraldobl58/microservices-config-data.git
+            username: ${GITHUB_USERNAME:}
+            password: ${GITHUB_TOKEN:}
+            clone-on-start: true
+            default-label: main
+
 server:
   port: 8088
