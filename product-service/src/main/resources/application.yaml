@@ -5,8 +5,12 @@ spring:
     import: "optional:configserver:http://localhost:8088"
   data:
     mongodb:
-      # prefer single URI to avoid deprecated host/port properties
-      uri: mongodb://root:password@localhost:27017/product-db?authSource=admin
+      host: localhost
+      port: 27017
+      database: product-db
+      username: root
+      password: password
+      authentication-database: admin
 
 server:
   port: 8081

@@ -1,20 +1,15 @@
 spring:
   application:
     name: config-server
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        # Try local filesystem first (use the repository's config-data/ folder)
-        # then fall back to the git repository if GITHUB credentials are provided.
-        composite:
-          - type: native
-            search-locations: file:../config-data
-          - type: git
-            uri: https://github.com/geraldobl58/microservices-config-data.git
-            username: ${GITHUB_USERNAME:}
-            password: ${GITHUB_TOKEN:}
-            clone-on-start: true
-            default-label: main
+        # Use local filesystem 'native' backend during development.
+        native:
+          # relative to config-server module; file:../config-data points to repo root/config-data
+          search-locations: file:../config-data
 
 server:
   port: 8088
