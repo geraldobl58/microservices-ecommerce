@@ -7,6 +7,7 @@ spring:
     virtual:
       enabled: true
   datasource:
+    # URI JDBC centralizada (moderna e recomendada)
     url: jdbc:mysql://localhost:3306/stockdb
     username: root
     password: root

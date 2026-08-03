@@ -5,12 +5,9 @@ spring:
     import: "optional:configserver:http://localhost:8088"
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: product-db
-      username: root
-      password: password
-      authentication-database: admin
+      # URI moderna (recomendado)
+      # Fallback local quando Config Server não estiver disponível
+      uri: mongodb://root:password@localhost:27017/product-db?authSource=admin
 
 server:
   port: 8081
