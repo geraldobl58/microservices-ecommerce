@@ -11,6 +11,7 @@ import com.ecomerce.order_service.service.client.StockClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,18 +23,23 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@RefreshScope
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-//    private final WebClient.Builder webClientBuilder;
     private final StockClient stockClient;
 
-//    @Value("${stock.service.url:http://localhost:8082}")
-//    private String stockServiceUrl;
+    @Value("${orders.enabled:true}")
+    private boolean ordersEnabled;
 
     @Override
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
+        if (!ordersEnabled) {
+            log.warn("Order creation is currently disabled.");
+            throw new RuntimeException("Order creation is currently disabled.");
+        }
+
         log.info("Creating order for customer");
 
         Order order = orderMapper.toOrder(orderRequest);
@@ -43,18 +49,6 @@ public class OrderServiceImpl implements OrderService {
             Integer quantity = item.getQuantity();
 
             try {
-//                String stockUrl = stockServiceUrl + "/api/v1/stock/reduce/" + sku;
-//                log.debug("Calling stock service to reduce stock: {} with quantity: {}", stockUrl, quantity);
-//
-//                String response = webClientBuilder.build().put()
-//                        .uri(stockUrl, uriBuilder -> uriBuilder
-//                                .queryParam("quantity", quantity).build())
-//                        .retrieve()
-//                        .bodyToMono(String.class)
-//                        .block();
-//
-//                log.info("Stock reduced successfully for SKU: {} - Response: {}", sku, response);
-
                 stockClient.reduceStock(sku, quantity);
 
             } catch (WebClientResponseException e) {
