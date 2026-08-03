@@ -8,6 +8,8 @@ import com.ecommerce.stock_service.repository.StockRepository;
 import com.ecommerce.stock_service.service.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +19,23 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@RefreshScope
 public class StockServiceImpl implements StockService {
 
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
 
+    @Value("${inventory.allow-backorder:false}")
+    private boolean allowBackorders;
+
     @Override
     @Transactional(readOnly = true)
     public boolean isInStock(String sku, Integer quantity) {
+        if (allowBackorders) {
+            log.warn("Backorders are allowed. Stock availability check for SKU {} will always return true.", sku);
+            return true;
+        }
+
         return stockRepository.findBySku(sku)
                 .map(stock -> stock.getQuantity() >= quantity)
                 .orElse(false);
