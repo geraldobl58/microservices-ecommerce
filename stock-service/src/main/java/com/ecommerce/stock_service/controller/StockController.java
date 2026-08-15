@@ -3,6 +3,7 @@ package com.ecommerce.stock_service.controller;
 import com.ecommerce.stock_service.dto.StockRequest;
 import com.ecommerce.stock_service.dto.StockResponse;
 import com.ecommerce.stock_service.service.StockService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,8 @@ class StockController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<StockResponse> getStocks() {
+    public List<StockResponse> getStocks(HttpServletRequest request) {
+        System.out.println("Requested in " + request.getServerPort() + " port");
         return stockService.getAllStocks();
     }
 
