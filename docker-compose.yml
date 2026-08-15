@@ -1,7 +1,9 @@
+name: microservices-ecommerce
+
 services:
   mongodb:
     image: mongo:7.0.4
-    container_name: mongodb
+    container_name: me-mongodb
     restart: always
     ports:
       - "27017:27017"
@@ -12,7 +14,7 @@ services:
       - mongo_data:/data/db
   stock-db:
     image: mysql:8
-    container_name: stock-db
+    container_name: me-stock-db
     ports:
       - "3306:3306"
     environment:
@@ -22,7 +24,7 @@ services:
       - stock_db_data:/var/lib/mysql
   order-db:
     image: postgres:16-alpine
-    container_name: order-db
+    container_name: me-order-db
     ports:
       - "5432:5432"
     environment:
@@ -31,7 +33,6 @@ services:
       - POSTGRES_DB=orderdb
     volumes:
       - order_db_data:/var/lib/postgresql/data
-
 
 #  product-service:
 #    build: .
