@@ -7,7 +7,6 @@ spring:
     virtual:
       enabled: true
   datasource:
-    # URI JDBC centralizada (moderna e recomendada)
     url: jdbc:postgresql://localhost:5432/orderdb
     username: admin
     password: admin
@@ -27,8 +26,3 @@ server:
 stock:
   service:
     url: http://localhost:8082
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
