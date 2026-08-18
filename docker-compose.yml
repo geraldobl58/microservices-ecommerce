@@ -34,23 +34,35 @@ services:
     volumes:
       - order_db_data:/var/lib/postgresql/data
 
-#  product-service:
-#    build: .
-#    container_name: product-service
-#    ports:
-#      - "8081:8081"
-#    environment:
-#      - SERVER_PORT=8081
-#      - MONGO_HOST=mongodb
-#      - MONGO_PORT=27017
-#      - MONGO_DATABASE=product-db
-#      - MONGO_USERNAME=root
-#      - MONGO_PASSWORD=password
-#      - MONGO_AUTH_DB=admin
-#    depends_on:
-#      - mongodb
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: me-keycloak-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=keycloakdb
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloakdb
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
 
 volumes:
   mongo_data:
   stock_db_data:
   order_db_data:
+  keycloak_db_data:
